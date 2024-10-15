@@ -3,25 +3,25 @@
 #include "matrix.h"
 #include "smatrix.h"
 
-smatrix_entry* smatrix_new(int **mat, int m, int n)
+smatrix_entry* smatrix_new(matrix *mat)
 {
-	int sz = matrix_nzcnt(mat, m, n);
+	int sz = matrix_nzcnt(mat);
 	smatrix_entry *smat = malloc(sizeof(smatrix_entry) * (sz+1));
-	smat[0].r = m;
-	smat[0].c = n;
+	smat[0].r = mat->m;
+	smat[0].c = mat->n;
 	smat[0].v = sz;
 
 	int pos = 1;
-	for (int i = 0; i < m; i++)
+	for (int i = 0; i < mat->m; i++)
 	{
-		for (int j = 0; j < n; j++)
+		for (int j = 0; j < mat->n; j++)
 		{
-			if (!mat[i][j])
+			if (!mat->mem[i][j])
 				continue;
 
 			smat[pos].r = i;
 			smat[pos].c = j;
-			smat[pos].v = mat[i][j];
+			smat[pos].v = mat->mem[i][j];
 			pos++;
 		}
 	}
@@ -34,8 +34,9 @@ void smatrix_free(smatrix_entry *smat)
 	free(smat);
 }
 
-void smatrix_trans(smatrix_entry *smat, smatrix_entry *res)
+smatrix_entry* smatrix_trans(smatrix_entry *smat)
 {
+	smatrix_entry *res = malloc(sizeof(smatrix_entry) * (smat[0].v+1));
 	res[0].r = smat[0].c;
 	res[0].c = smat[0].r;
 	res[0].v = smat[0].v;
@@ -54,6 +55,8 @@ void smatrix_trans(smatrix_entry *smat, smatrix_entry *res)
 			pos++;
 		}
 	}
+
+	return res;
 }
 
 /*
@@ -63,30 +66,34 @@ __smatrix_add: utility function to perform matrix addition/subtraction with two 
 	sign: assumed to be either 1 or -1. 1 is used for addition, -1 is used for subtraction.
 	res: resulting matrix.
 */
-static void __smatrix_add(smatrix_entry *smat_a, smatrix_entry *smat_b, int sign, int **res)
+static matrix* __smatrix_add(smatrix_entry *smat_a, smatrix_entry *smat_b, int sign)
 {
-	matrix_init(res, smat_a[0].r, smat_a[0].c);
+	matrix *res = matrix_new(smat_a[0].r, smat_a[0].c);
+	matrix_init(res);
 
 	for (int i = 1; i <= smat_a[0].v; i++)
-		res[smat_a[i].r][smat_a[i].c] += smat_a[i].v;
+		res->mem[smat_a[i].r][smat_a[i].c] += smat_a[i].v;
 
 	for (int i = 1; i <= smat_b[0].v; i++)
-		res[smat_b[i].r][smat_b[i].c] += sign * smat_b[i].v;
+		res->mem[smat_b[i].r][smat_b[i].c] += sign * smat_b[i].v;
+
+	return res;
 }
 
-void smatrix_add(smatrix_entry *smat_a, smatrix_entry *smat_b, int **res)
+matrix* smatrix_add(smatrix_entry *smat_a, smatrix_entry *smat_b)
 {
-	__smatrix_add(smat_a, smat_b, 1, res);
+	return __smatrix_add(smat_a, smat_b, 1);
 }
 
-void smatrix_sub(smatrix_entry *smat_a, smatrix_entry *smat_b, int **res)
+matrix* smatrix_sub(smatrix_entry *smat_a, smatrix_entry *smat_b)
 {
-	__smatrix_add(smat_a, smat_b, -1, res);
+	return __smatrix_add(smat_a, smat_b, -1);
 }
 
-void smatrix_mult(smatrix_entry *smat_a, smatrix_entry *smat_b, int **res)
+matrix* smatrix_mult(smatrix_entry *smat_a, smatrix_entry *smat_b)
 {
-	matrix_init(res, smat_a[0].r, smat_b[0].c);
+	matrix *res = matrix_new(smat_a[0].r, smat_b[0].c);
+	matrix_init(res);
 
 	for (int i = 1; i <= smat_a[0].v; i++)
 	{
@@ -96,9 +103,11 @@ void smatrix_mult(smatrix_entry *smat_a, smatrix_entry *smat_b, int **res)
 			if (smat_a[i].c != smat_b[j].r)
 				continue;
 
-			res[smat_a[i].r][smat_b[j].c] += smat_a[i].v * smat_b[j].v;
+			res->mem[smat_a[i].r][smat_b[j].c] += smat_a[i].v * smat_b[j].v;
 		}
 	}
+
+	return res;
 }
 
 void smatrix_print(smatrix_entry *smat)

@@ -4,117 +4,137 @@
 #include "nstdmath.h"
 #define ENTRY_MAX 16
 
-int** matrix_new(int m, int n)
+matrix* matrix_new(int m, int n)
 {
-	int **mat = malloc(sizeof(int*) * m);
+	matrix *mat = malloc(sizeof(matrix));
+	mat->m = m;
+	mat->n = n;
+	mat->mem = malloc(sizeof(int*) * m);
 	for (int i = 0; i < m; i++)
-		mat[i] = malloc(sizeof(int) * n);
+		mat->mem[i] = malloc(sizeof(int) * n);
 
 	return mat;
 }
 
-void matrix_free(int **mat, int m)
+void matrix_free(matrix *mat)
 {
-	for (int i = 0; i < m; i++)
-		free(mat[i]);
+	for (int i = 0; i < mat->m; i++)
+		free(mat->mem[i]);
+	free(mat->mem);
 	free(mat);
 }
 
 // matrix_init: completely zeroes-out the given matrix.
-void matrix_init(int **mat, int m, int n)
+void matrix_init(matrix *mat)
 {
-	for (int i = 0; i < m; i++)
+	for (int i = 0; i < mat->m; i++)
 	{
-		for (int j = 0; j < n; j++)
+		for (int j = 0; j < mat->n; j++)
 		{
-			mat[i][j] = 0;
+			mat->mem[i][j] = 0;
 		}
 	}
 }
 
 // matrix_rand: randomizes the entries of the given matrix.
-void matrix_rand(int **mat, int m, int n)
+void matrix_rand(matrix *mat)
 {
-	for (int i = 0; i < m; i++)
+	for (int i = 0; i < mat->m; i++)
 	{
-		for (int j = 0; j < n; j++)
+		for (int j = 0; j < mat->n; j++)
 		{
-			mat[i][j] = rand() % ENTRY_MAX - ENTRY_MAX/2;
+			mat->mem[i][j] = rand() % ENTRY_MAX - ENTRY_MAX/2;
 		}
 	}
 }
 
 // matrix_nzcnt(non-zero count): returns the number of non-zero entries in the given matrix.
-int matrix_nzcnt(int **mat, int m, int n)
+int matrix_nzcnt(matrix *mat)
 {
 	int cnt = 0;
 
-	for (int i = 0; i < m; i++)
+	for (int i = 0; i < mat->m; i++)
 	{
-		for (int j = 0; j < n; j++)
+		for (int j = 0; j < mat->n; j++)
 		{
-			cnt += mat[i][j] != 0;
+			cnt += mat->mem[i][j] != 0;
 		}
 	}
 
 	return cnt;
 }
 
-void matrix_add(int **mat_a, int **mat_b, int **mat_res, int m, int n)
+matrix* matrix_add(matrix *mat_a, matrix *mat_b)
 {
-	for (int i = 0; i < m; i++)
+	matrix *res = matrix_new(mat_a->m, mat_a->n);
+
+	for (int i = 0; i < mat_a->m; i++)
 	{
-		for (int j = 0; j < n; j++)
+		for (int j = 0; j < mat_a->n; j++)
 		{
-			mat_res[i][j] = mat_a[i][j] + mat_b[i][j];
+			res->mem[i][j] = mat_a->mem[i][j] + mat_b->mem[i][j];
 		}
 	}
+
+	return res;
 }
 
-void matrix_sub(int **mat_a, int **mat_b, int **mat_res, int m, int n)
+matrix* matrix_sub(matrix *mat_a, matrix *mat_b)
 {
-	for (int i = 0; i < m; i++)
+	matrix *res = matrix_new(mat_a->m, mat_a->n);
+
+	for (int i = 0; i < mat_a->m; i++)
 	{
-		for (int j = 0; j < n; j++)
+		for (int j = 0; j < mat_a->n; j++)
 		{
-			mat_res[i][j] = mat_a[i][j] - mat_b[i][j];
+			res->mem[i][j] = mat_a->mem[i][j] - mat_b->mem[i][j];
 		}
 	}
+
+	return res;
 }
 
-void matrix_mult(int **mat_a, int **mat_b, int **mat_res, int m, int n, int p)
+matrix* matrix_mult(matrix *mat_a, matrix *mat_b)
 {
-	for (int i = 0; i < m; i++)
+	matrix *res = matrix_new(mat_a->m, mat_b->n);
+
+	for (int i = 0; i < mat_a->m; i++)
 	{
-		for (int j = 0; j < p; j++)
+		for (int j = 0; j < mat_b->n; j++)
 		{
 			// dot product.
 			int dprod = 0;
-			for (int k = 0; k < n; k++)
-				dprod += mat_a[i][k] * mat_b[k][j];
+			for (int k = 0; k < mat_a->n; k++)
+				dprod += mat_a->mem[i][k] * mat_b->mem[k][j];
 
-			mat_res[i][j] = dprod;
+			res->mem[i][j] = dprod;
 		}
 	}
+
+	return res;
 }
 
-void matrix_div(int **mat_a, int **mat_b, int **mat_res, int m, int n)
+matrix* matrix_div(matrix *mat_a, matrix *mat_b)
 {
-	for (int i = 0; i < m; i++)
+	matrix *res = matrix_new(mat_a->m, mat_a->n);
+
+	for (int i = 0; i < mat_a->m; i++)
 	{
-		for (int j = 0; j < n; j++)
+		for (int j = 0; j < mat_a->n; j++)
 		{
-			mat_res[i][j] = nstd_idiv(mat_a[i][j], mat_b[i][j]);
+			res->mem[i][j] = nstd_idiv(mat_a->mem[i][j], mat_b->mem[i][j]);
 		}
 	}
+
+	return res;
 }
 
-void matrix_print(int **mat, int m, int n)
+void matrix_print(matrix *mat)
 {
-	for (int i = 0; i < m; i++)
+	for (int i = 0; i < mat->m; i++)
 	{
-		for (int j = 0; j < n; j++)
-			printf("%d ", mat[i][j]);
+		for (int j = 0; j < mat->n; j++)
+			printf("%d ", mat->mem[i][j]);
 
 		puts("");
 	}

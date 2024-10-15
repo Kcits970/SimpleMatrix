@@ -8,38 +8,26 @@ int main()
 {
 	srand(time(0));
 
-	int **a = matrix_new(3, 3);
-	int **b = matrix_new(3, 3);
-	matrix_rand(a, 3, 3);
-	matrix_rand(b, 3, 3);
+	matrix *a = matrix_new(3, 3);
+	matrix *b = matrix_new(3, 3);
+	matrix_rand(a);
+	matrix_rand(b);
 
-	puts("matrix a");
-	matrix_print(a, 3, 3);
-	puts("matrix b");
-	matrix_print(b, 3, 3);
+	puts("a matrix");
+	matrix_print(a);
+	puts("b matrix");
+	matrix_print(b);
 
-	int **c = matrix_new(3, 3);
-	int **d = matrix_new(3, 3);
-	int **e = matrix_new(3, 3);
+	matrix *c = matrix_add(a, b);
+	matrix *d = matrix_sub(a, b);
+	matrix *e = matrix_mult(a, b);
 
-	smatrix_entry *sa = smatrix_new(a, 3, 3);
-	smatrix_entry *sb = smatrix_new(b, 3, 3);
-	
-	puts("sparse matrix a");
-	smatrix_print(sa);
-	puts("sparse matrix b");
-	smatrix_print(sb);
-	
-	smatrix_add(sa, sb, c);
-	smatrix_sub(sa, sb, d);
-	smatrix_mult(sa, sb, e);
-
-	puts("matrix c = a + b");
-	matrix_print(c, 3, 3);
-	puts("matrix d = a - b");
-	matrix_print(d, 3, 3);
-	puts("matrix e = a * b");
-	matrix_print(e, 3, 3);
+	puts("c matrix");
+	matrix_print(c);
+	puts("d matrix");
+	matrix_print(d);
+	puts("e matrix");
+	matrix_print(e);
 
 	return 0;
 }
