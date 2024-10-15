@@ -20,6 +20,18 @@ void matrix_free(int **mat, int m)
 	free(mat);
 }
 
+// matrix_init: completely zeroes-out the given matrix.
+void matrix_init(int **mat, int m, int n)
+{
+	for (int i = 0; i < m; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			mat[i][j] = 0;
+		}
+	}
+}
+
 // matrix_rand: randomizes the entries of the given matrix.
 void matrix_rand(int **mat, int m, int n)
 {
