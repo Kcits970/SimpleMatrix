@@ -64,7 +64,6 @@ __smatrix_add: utility function to perform matrix addition/subtraction with two 
 	smat_a: first operand.
 	smat_b: second operand.
 	sign: assumed to be either 1 or -1. 1 is used for addition, -1 is used for subtraction.
-	res: resulting matrix.
 */
 static matrix* __smatrix_add(smatrix_entry *smat_a, smatrix_entry *smat_b, int sign)
 {
