@@ -29,5 +29,10 @@ int main()
 	puts("e matrix");
 	matrix_print(e);
 
+	matrix_free(a);
+	matrix_free(b);
+	matrix_free(c);
+	matrix_free(d);
+	matrix_free(e);
 	return 0;
 }
