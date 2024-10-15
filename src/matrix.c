@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "matrix.h"
 #include "nstdmath.h"
-#define ENTRY_MAX 9
+#define ENTRY_MAX 16
 
 int** matrix_new(int m, int n)
 {
@@ -27,7 +27,7 @@ void matrix_rand(int **mat, int m, int n)
 	{
 		for (int j = 0; j < n; j++)
 		{
-			mat[i][j] = rand() % (ENTRY_MAX+1);
+			mat[i][j] = rand() % ENTRY_MAX - ENTRY_MAX/2;
 		}
 	}
 }

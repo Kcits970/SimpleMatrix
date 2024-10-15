@@ -16,6 +16,9 @@ typedef struct smatrix_entry smatrix_entry;
 smatrix_entry* smatrix_new(int**, int, int);
 void smatrix_free(smatrix_entry*);
 void smatrix_trans(smatrix_entry*, smatrix_entry*);
+void smatrix_add(smatrix_entry*, smatrix_entry*, smatrix_entry*);
+void smatrix_sub(smatrix_entry*, smatrix_entry*, smatrix_entry*);
+void smatrix_div(smatrix_entry*, smatrix_entry*, smatrix_entry*);
 void smatrix_print(smatrix_entry*);
 
 #endif
