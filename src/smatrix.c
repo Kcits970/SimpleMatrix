@@ -63,7 +63,7 @@ static inline int __rcpair_cmp(int r1, int c1, int r2, int c2)
 }
 
 /*
-__smatrix_comb: utility function to perform addition/subtraction between two sparse matrices.
+__smatrix_add: utility function to perform addition/subtraction between two sparse matrices.
 	smat_a: first operand.
 	smat_b: second operand.
 	sign: assumed to be either 1 or -1. 1 is used for addition, -1 is used for subtraction.
