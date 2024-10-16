@@ -14,6 +14,7 @@ matrix* matrix_new(int, int);
 void matrix_free(matrix*);
 void matrix_init(matrix*);
 void matrix_rand(matrix*);
+void matrix_zrand(matrix*, int);
 int matrix_nzcnt(matrix*);
 matrix* matrix_add(matrix*, matrix*);
 matrix* matrix_sub(matrix*, matrix*);

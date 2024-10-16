@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "matrix.h"
 #include "nstdmath.h"
-#define ENTRY_MAX 16
+#define ENTRY_MAX 64
 
 matrix* matrix_new(int m, int n)
 {
@@ -44,6 +44,20 @@ void matrix_rand(matrix *mat)
 		for (int j = 0; j < mat->n; j++)
 		{
 			mat->mem[i][j] = rand() % ENTRY_MAX - ENTRY_MAX/2;
+		}
+	}
+}
+
+// matrix_zrand: randomizes the entries of the given matrix; approximately k entries will be non-zero.
+void matrix_zrand(matrix *mat, int k)
+{
+	int __sz = mat->m * mat->n;
+
+	for (int i = 0; i < mat->m; i++)
+	{
+		for (int j = 0; j < mat->n; j++)
+		{
+			mat->mem[i][j] = (rand()%__sz < k) ? (rand() % ENTRY_MAX - ENTRY_MAX/2) : 0;
 		}
 	}
 }
