@@ -74,9 +74,35 @@ void test_sparse_binary(int size, matrix* (*op)(smatrix_entry*, smatrix_entry*),
         matrix_free(res);
 }
 
+// test_extra: sparse multiplication test with a specific percentage of zero entries.
+void test_extra(int size, double percentage)
+{
+	matrix *a = matrix_new(size, size);
+	matrix *b = matrix_new(size, size);
+	matrix_zrand(a, (int) (size*size*(1-percentage)));
+	matrix_zrand(b, (int) (size*size*(1-percentage)));
+
+	smatrix_entry *sa = smatrix_new(a);
+	smatrix_entry *sb = smatrix_new(b);
+
+	clock_t start = clock();
+	matrix *res = smatrix_mult(sa, sb);
+	clock_t end = clock();
+
+	double t = (double) (end - start) / CLOCKS_PER_SEC;
+	printf("%dx%d (%.2lf%%) sparse matrix multiplication: %lf seconds\n", size, size, 100*percentage, t);
+
+	matrix_free(a);
+	matrix_free(b);
+	smatrix_free(sa);
+	smatrix_free(sb);
+	matrix_free(res);
+}
+
 int main()
 {
 	srand(time(0));
+	goto last;
 
 	int inputs[11] = {1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000};
 
@@ -102,6 +128,11 @@ int main()
 		test_sparse_binary(inputs[i], smatrix_mult, "smatrix_mult");
 		puts("");
 	}
+
+last:
+	double percentage[9] = {0, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 1};
+	for (int i = 0; i < 9; i++)
+		test_extra(300, percentage[i]);
 
 	return 0;
 }
